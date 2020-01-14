@@ -6,14 +6,11 @@ use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 
-use wasmuri_components::input::text::TextEditField;
-use wasmuri_components::button::text::TextButton;
 use wasmuri_components::behavior::render::*;
 use wasmuri_components::macros::*;
 use wasmuri_container::*;
 use wasmuri_container::layer::*;
 use wasmuri_core::color::*;
-use wasmuri_core::util::*;
 use wasmuri_text::*;
 
 use web_sys::{
@@ -55,16 +52,13 @@ fn create_main_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
     let mut layer = Layer::new(Some(Color::from_rgb(100, 200, 50)));
 
     let font_clone = Rc::clone(&font);
-
-    /*
-    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Simple components", &font,
-        Box::new(AlignedTextLocation::new(Region::new(-8000, 5000, -4000, 7000), TextAlignment::Center, false)),
-        TextColors::create_simple_button(Color::BLUE)
-    ), Box::new(move |agent, _controller, _helper| {
-        agent.change_container(create_simple_menu(Rc::clone(&font_clone)));
-    })));*/
     add_simple_text_button(&mut layer, -8000, 5000, -4000, 7000, "Simple components", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
         agent.change_container(create_simple_menu(Rc::clone(&font_clone)));
+    });
+
+    let font_clone = Rc::clone(&font);
+    add_simple_text_button(&mut layer, -8000, 2000, -4000, 4000, "overlapping edit fields", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
+        agent.change_container(create_overlapping_edit_menu(Rc::clone(&font_clone)));
     });
 
     Rc::new(RefCell::new(FlatContainer::new(layer)))
@@ -74,23 +68,23 @@ fn create_simple_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
     let mut layer = Layer::new(Some(Color::from_rgb(100, 200, 50)));
 
     let font_clone = Rc::clone(&font);
-
-    /*
-    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Back", &font,
-        Box::new(AlignedTextLocation::new(Region::new(-8000, 5000, -7000, 7000), TextAlignment::Center, false)),
-        TextColors::create_simple_button(Color::BLUE)
-    ), Box::new(move |agent, _controller, _helper| {
-        agent.change_container(create_main_menu(Rc::clone(&font_clone)));
-    })));*/
     add_simple_text_button(&mut layer, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
         agent.change_container(create_main_menu(Rc::clone(&font_clone)));
     });
 
-    /*
-    layer.add_component(TextEditField::celled(EditTextRenderController::simple_tuple("Type...", &font, 
-        Box::new(AlignedTextLocation::new(Region::new(-2000, -1500, 2000, 1500), TextAlignment::LeftCenter, true)), 
-        TextColors::new(Color::BLACK, Color::BLACK, Color::from_rgb(200, 200, 200)))));*/
     add_simple_edit_field(&mut layer, -2000, -1500, 2000, 1500, "Type...", &font);
 
     Rc::new(RefCell::new(FlatContainer::new(layer)))
+}
+
+fn create_overlapping_edit_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
+    let mut layer1 = Layer::new(Some(Color::from_rgb(100, 200, 200)));
+    let mut layer2 = Layer::new(None);
+    let mut layer3 = Layer::new(None);
+
+    add_simple_edit_field(&mut layer1, -3000, -4000, 3000, -2000, "Layer1", &font);
+    add_simple_edit_field(&mut layer2, -3000, -3000, 3000, -1000, "Layer2", &font);
+    add_simple_edit_field(&mut layer3, -3000, -2000, 3000, 0, "Layer3", &font);
+
+    Rc::new(RefCell::new(LayeredContainer::new(vec![layer1, layer2, layer3])))
 }
