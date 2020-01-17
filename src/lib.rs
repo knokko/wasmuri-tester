@@ -6,10 +6,8 @@ use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 
-use wasmuri_components::behavior::render::*;
-use wasmuri_components::macros::*;
+use wasmuri_components::*;
 use wasmuri_container::*;
-use wasmuri_container::layer::*;
 use wasmuri_core::color::*;
 use wasmuri_text::*;
 
@@ -81,6 +79,11 @@ fn create_overlapping_edit_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
     let mut layer1 = Layer::new(Some(Color::from_rgb(100, 200, 200)));
     let mut layer2 = Layer::new(None);
     let mut layer3 = Layer::new(None);
+
+    let font_clone = Rc::clone(&font);
+    add_simple_text_button(&mut layer1, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
+        agent.change_container(create_main_menu(Rc::clone(&font_clone)));
+    });
 
     add_simple_edit_field(&mut layer1, -3000, -4000, 3000, -2000, "Layer1", &font);
     add_simple_edit_field(&mut layer2, -3000, -3000, 3000, -1000, "Layer2", &font);
