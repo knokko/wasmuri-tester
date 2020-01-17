@@ -22,6 +22,15 @@ use web_sys::{
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+fn default_font_details() -> FontDetails {
+    FontDetails::from_str("", "Arial")
+}
+
+fn default_font(params: &MouseClickParams) -> Rc<Font> {
+    let renderer = params.manager.get_text_renderer().borrow();
+    renderer.get_font_by_details(default_font_details()).expect("Default font should be available")
+}
+
 #[wasm_bindgen(start)]
 pub fn main() {
     utils::set_panic_hook();
@@ -36,7 +45,7 @@ pub fn main() {
         let container_manager = container_manager_cell.borrow();
 
         let mut text_renderer = container_manager.get_text_renderer().borrow_mut();
-        default_font = text_renderer.add_font(FontDetails::from_str("", "Arial"));
+        default_font = text_renderer.add_font(default_font_details());
     }
 
     let mut container_manager = container_manager_cell.borrow_mut();
@@ -65,9 +74,8 @@ fn create_main_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
 fn create_simple_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
     let mut layer = SimpleLayer::new(Some(Color::from_rgb(100, 200, 50)));
 
-    let font_clone = Rc::clone(&font);
-    add_simple_text_button(&mut layer, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
-        agent.change_container(create_main_menu(Rc::clone(&font_clone)));
+    add_simple_text_button(&mut layer, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, params| {
+        agent.change_container(create_main_menu(default_font(params)));
     });
 
     add_simple_edit_field(&mut layer, -2000, -1500, 2000, 1500, "Type...", &font);
@@ -80,9 +88,8 @@ fn create_overlapping_edit_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
     let mut layer2 = SimpleLayer::new(None);
     let mut layer3 = SimpleLayer::new(None);
 
-    let font_clone = Rc::clone(&font);
-    add_simple_text_button(&mut layer1, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
-        agent.change_container(create_main_menu(Rc::clone(&font_clone)));
+    add_simple_text_button(&mut layer1, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, params| {
+        agent.change_container(create_main_menu(default_font(params)));
     });
 
     add_simple_edit_field(&mut layer1, -3000, -4000, 3000, -2000, "Layer1", &font);
