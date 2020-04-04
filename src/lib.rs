@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::*;
 
 use wasmuri_components::*;
 use wasmuri_container::*;
-use wasmuri_core::color::*;
+use wasmuri_core::*;
 use wasmuri_text::*;
 
 use web_sys::{
@@ -68,6 +68,11 @@ fn create_main_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
         agent.change_container(create_overlapping_edit_menu(Rc::clone(&font_clone)));
     });
 
+    let font_clone = Rc::clone(&font);
+    add_simple_text_button(&mut layer, -8000, -1000, -4000, 1000, "transparent button row", Color::BLUE, &font, TextAlignment::Center, move |agent, _, _| {
+        agent.change_container(create_buttons_row_menu(Rc::clone(&font_clone)));
+    });
+
     Rc::new(RefCell::new(FlatContainer::new(Box::new(layer))))
 }
 
@@ -97,4 +102,25 @@ fn create_overlapping_edit_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
     add_simple_edit_field(&mut layer3, -3000, -2000, 3000, 0, "Layer3", &font);
 
     Rc::new(RefCell::new(LayeredContainer::new(vec![Box::new(layer1), Box::new(layer2), Box::new(layer3)])))
+}
+
+fn create_buttons_row_menu(font: Rc<Font>) -> Rc<RefCell<dyn Container>> {
+    let mut layer1 = SimpleLayer::new(Some(Color::from_rgb(100, 200, 200)));
+    let mut layer2 = SimpleLayer::new(None);
+    let mut layer3 = SimpleLayer::new(None);
+    let mut layer4 = SimpleLayer::new(None);
+    let mut layer5 = SimpleLayer::new(None);
+
+    add_simple_text_button(&mut layer1, -8000, 5000, -7000, 7000, "Back", Color::BLUE, &font, TextAlignment::Center, move |agent, _, params| {
+        agent.change_container(create_main_menu(default_font(params)));
+    });
+
+    let button_color = Color::from_rgba(200, 200, 50, 100);
+    add_simple_text_button(&mut layer1, -5000, 0, -2000, 2000, "Layer1", button_color, &font, TextAlignment::Center, |_, _, _| {});
+    add_simple_text_button(&mut layer2, -3000, 0, 0, 2000, "Layer2", button_color, &font, TextAlignment::Center, |_, _, _| {});
+    add_simple_text_button(&mut layer3, -2000, 0, 1000, 2000, "Layer3", button_color, &font, TextAlignment::Center, |_, _, _| {});
+    add_simple_text_button(&mut layer4, 0, 0, 3000, 2000, "Layer4", button_color, &font, TextAlignment::Center, |_, _, _| {});
+    add_simple_text_button(&mut layer5, 1000, 0, 4000, 2000, "Layer5", button_color, &font, TextAlignment::Center, |_, _, _| {});
+
+    Rc::new(RefCell::new(LayeredContainer::new(vec![Box::new(layer1), Box::new(layer2), Box::new(layer3), Box::new(layer4), Box::new(layer5)])))
 }

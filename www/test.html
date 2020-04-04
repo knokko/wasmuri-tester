@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <body onload="main()" onpaste="testPaste(event)" oncopy="testCopy(event)">
+        <script>
+            function main() {
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    navigator.clipboard.readText().then(clipText => console.log('pasting', clipText)).catch(error => console.log('rejected'));
+                } else {
+                    console.log('no browser support');
+                }
+            }
+
+            function testPaste(event) {
+                console.log('data', event.clipboardData.getData("text"));
+            }
+
+            function testCopy(event) {
+                console.log('event', event);
+                event.clipboardData.setData("text", "test");
+                event.preventDefault();
+            }
+        </script>
+        <button onclick="main()">Try again</button>
+        <canvas></canvas>
+    </body>
+</html>
