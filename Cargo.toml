@@ -12,11 +12,11 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2"
-wasmuri-components = { path = "../../libraries/wasmuri/components" }
-wasmuri-container = { path = "../../libraries/wasmuri/container" }
-wasmuri-core = { path = "../../libraries/wasmuri/core" }
-wasmuri-text = { path = "../../libraries/wasmuri/text" }
-wasmuri-events = { path = "../../libraries/wasmuri/events" }
+wasmuri-components = { path = "../components" }
+wasmuri-container = { path = "../container" }
+wasmuri-core = { path = "../core" }
+wasmuri-text = { path = "../text" }
+wasmuri-events = { path = "../events" }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
